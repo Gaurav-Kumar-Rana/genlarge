@@ -29,7 +29,7 @@ class App extends Component {
   render() {
     return (
       <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item xs={9}>
+          <Grid item xs={7}>
             <TableComponent tableData={tabledata} />
             {/* <CustomizedTable />
             <EnhancedTable /> */}

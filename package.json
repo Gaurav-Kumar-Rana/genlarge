@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev-node": "webpack-dev-server",
-    "prod-node": "react-scripts build"
+    "prod-node": "webpack"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

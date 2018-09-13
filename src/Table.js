@@ -18,7 +18,7 @@ import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: '0px',
     overflowX: 'auto',
     overflowY:'auto'
   },
@@ -94,19 +94,11 @@ class TableComponent extends React.Component{
           </div>
           <div className={classes.spacer}></div>
           <div className={classes.actions}>
-            {this.state.zoomState ? (
-                <Tooltip title="Normal View">
-                <IconButton aria-label="Normal View" onClick={this.onRequestZoomOut}>
-                <ZoomOutIcon />
-                </IconButton>
-              </Tooltip>
-            ):(
-              <Tooltip title="Enlarge View" >
-                <IconButton aria-label="Enlarge View" onClick={this.onRequestZoomIn}>
-                    <ZoomInIcon />
-                </IconButton>
-              </Tooltip>
-            )}
+            <Tooltip title="Enlarge View" >
+              <IconButton aria-label="Enlarge View" onClick={this.onRequestZoomIn}>
+                  <ZoomInIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </Toolbar>
         <Table className={classes.table}>
@@ -124,6 +116,7 @@ class TableComponent extends React.Component{
         aria-describedby="simple-modal-description"
         open={this.state.zoomState}
         onClose={this.onRequestZoomOut}>
+          <div className="popup-container">
             <Paper className={classes.root}>
               <Toolbar className={classes.toolbar}>
                 <div className={classes.title}>
@@ -133,19 +126,11 @@ class TableComponent extends React.Component{
                 </div>
                 <div className={classes.spacer}></div>
                 <div className={classes.actions}>
-                  {!this.state.zoomState ? (
-                      <Tooltip title="Normal View">
-                      <IconButton aria-label="Normal View" onClick={this.onRequestZoomOut}>
-                        <ZoomInIcon />
-                      </IconButton>
-                    </Tooltip>
-                  ):(
-                    <Tooltip title="Enlarge View" >
-                      <IconButton aria-label="Enlarge View" onClick={this.onRequestZoomIn}>
-                          <ZoomOutIcon />
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                  <Tooltip title="Normal View">
+                    <IconButton aria-label="Normal View" onClick={this.onRequestZoomOut}>
+                      <ZoomOutIcon />
+                    </IconButton>
+                  </Tooltip>
                 </div>
               </Toolbar>
               <Table className={classes.table}>
@@ -158,7 +143,8 @@ class TableComponent extends React.Component{
                     {tableBody}
                 </TableBody>
               </Table>
-          </Paper>
+            </Paper>
+          </div>
       </Modal>
       </React.Fragment>
     )
