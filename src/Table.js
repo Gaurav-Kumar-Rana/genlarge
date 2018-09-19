@@ -15,6 +15,34 @@ import IconButton from '@material-ui/core/IconButton';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 
+import { connect } from "react-redux";
+import { fetchProductsSuccess, fetchProductsBegin, fetchProductsFailure } from "./js/action/index";
+/*
+1.mapStateToProps function:-
+mapStateToProps connects a part of the Redux state to the props of a React component. 
+By doing so a connected React component will have access to the exact part of the store it needs.
+
+2.mapDispatchToProps function:-
+mapDispatchToProps connects Redux actions to React props. 
+This way a connected React component will be able to dispatch actions.
+
+*/ 
+const mapStateToProps = (state) => {
+  return{
+    loading:state.loading,
+    metadata: state.metadata,
+    error:state.error
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return{
+    fetchProductsSuccess : actions => dispatch(fetchProductsSuccess(actions)),
+    fetchProductsBegin : sucess => dispatch(fetchProductsBegin(sucess)), 
+    fetchProductsError : error => dispatch(fetchProductsError(error))
+  }
+}
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -43,20 +71,22 @@ function createTableHead(headData){
   });
   return _headData;
 }
+
 function createTableBody(bodyData){
   let _bodyData = [];
-  _bodyData = bodyData.map((element) => {
-    return (
-      <TableRow key={element.id}>
-        <TableCell component="th" scope="row">
-          {element.name}
-        </TableCell>
-        <TableCell numeric>{element.calories}</TableCell>
-        <TableCell numeric>{element.fat}</TableCell>
-        <TableCell numeric>{element.carbs}</TableCell>
-        <TableCell numeric>{element.protein}</TableCell>
-    </TableRow>
-    );
+
+  bodyData.forEach((row,key) => {
+    let _columnData = [];
+    let col = null;
+    let colkey = 0;
+    for(col in row){
+        if(typeof(row[col]) === "boolean"){
+          row[col] = row[col] ? 'Yes' : 'No';
+        }
+        _columnData.push(<TableCell key={colkey}>{row[col]}</TableCell>);
+        colkey++;
+    }
+    _bodyData.push(<TableRow key={key}>{_columnData}</TableRow>)
   });
 
   return _bodyData;
@@ -67,6 +97,7 @@ class TableComponent extends React.Component{
   state={
     zoomState:false,
   };
+
   onRequestZoomIn = (event,property) => {
     this.setState({
       zoomState:!this.state.zoomState
@@ -79,17 +110,40 @@ class TableComponent extends React.Component{
     });
      console.log('Zoom State :' + this.state.zoomState);
   };
+  componentDidMount() {
+    //Data Fetching Begin
+    this.props.fetchProductsBegin();
+    //Connecting to api
+    fetch('https://jsonplaceholder.typicode.com/todos')
+    .then(response => response.json())
+    .then(data => {
+      data = {
+        heading:'To Do',
+        headData:[{name:"User Id",type:"number"},{name:"Id",type:"number"},{name:"Title",type:"String"},{name:"Completed",type:"boolen"}],
+        bodyData:data
+      }
+      //this.props.dispatch(fetchProductsSuccess(data));
+      this.props.fetchProductsSuccess(data)
+    })
+    .catch(error => {
+      this.props.fetchProductsFailure(error);
+    });
+  }
+
   render(){
-    const { classes, tableData} = this.props;
+    const { classes, loading, error} = this.props;
+    const tableData = this.props.metadata;
+
     const tableHead = createTableHead(tableData.headData);
     const tableBody = createTableBody(tableData.bodyData);
+    const tableHeading = tableData.heading;
     return(
       <React.Fragment>
       <Paper className={classes.root}>
         <Toolbar className={classes.toolbar}>
           <div className={classes.title}>
             <Typography variant="title" id="tableTitle">
-                Nutrition
+                {tableHeading}
             </Typography>
           </div>
           <div className={classes.spacer}></div>
@@ -121,7 +175,7 @@ class TableComponent extends React.Component{
               <Toolbar className={classes.toolbar}>
                 <div className={classes.title}>
                   <Typography variant="title" id="tableTitle">
-                      Nutrition
+                      {tableHeading}
                   </Typography>
                 </div>
                 <div className={classes.spacer}></div>
@@ -153,7 +207,7 @@ class TableComponent extends React.Component{
 
 TableComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  tableData:PropTypes.object.isRequired,
+  tableData:PropTypes.object,
 };
 
-export default withStyles(styles)(TableComponent);
+export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(TableComponent));
