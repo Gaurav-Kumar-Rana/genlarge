@@ -40,8 +40,8 @@ const mapDispatchToProps = (dispatch) => {
     fetchProductsSuccess : actions => dispatch(fetchProductsSuccess(actions)),
     fetchProductsBegin : sucess => dispatch(fetchProductsBegin(sucess)), 
     fetchProductsError : error => dispatch(fetchProductsError(error))
-  }
-}
+  };
+};
 
 const styles = theme => ({
   root: {

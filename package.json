@@ -10,8 +10,8 @@
     "classnames": "latest"
   },
   "scripts": {
-    "dev-node": "webpack-dev-server",
-    "prod-node": "webpack"
+    "dev-node": "webpack-dev-server --config webpack.config.js",
+    "prod-node": "webpack --config webpack.production.config.js"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
